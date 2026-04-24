@@ -2,6 +2,8 @@
 
 A personal plugin marketplace for [Claude Code](https://docs.anthropic.com/en/docs/claude-code). Drop-in extensions for the dev-workflow every project ends up reinventing.
 
+> Inspired by [deepanscode/claude-code-extensions](https://github.com/deepanscode/claude-code-extensions). Go take a look; it's worth the read.
+
 ## Quick install
 
 Copy-paste this to go from zero to working. Inside Claude Code:
