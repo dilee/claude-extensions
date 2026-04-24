@@ -1,0 +1,11 @@
+{
+  "name": "git-platform",
+  "description": "Unified MCP server for GitHub, GitLab, and Bitbucket — PR create / list / view / merge / approve / comment / decline, auto-detected from the repo's git remote. Reuses `gh` and `glab` auth; Bitbucket uses an API token.",
+  "author": {
+    "name": "dilee"
+  },
+  "homepage": "https://github.com/dilee/claude-extensions",
+  "repository": "https://github.com/dilee/claude-extensions",
+  "license": "MIT",
+  "keywords": ["mcp", "github", "gitlab", "bitbucket", "pull-requests", "merge-requests", "git"]
+}

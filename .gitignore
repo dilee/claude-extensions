@@ -1,0 +1,17 @@
+# OS
+.DS_Store
+Thumbs.db
+
+# Editors
+.vscode/
+.idea/
+*.swp
+
+# Claude Code
+.claude/
+!.claude-plugin/
+
+# Node (in case plugins add JS tooling later)
+node_modules/
+dist/
+*.log

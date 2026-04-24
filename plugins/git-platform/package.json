@@ -1,0 +1,26 @@
+{
+  "name": "git-platform-mcp",
+  "version": "0.1.0",
+  "description": "MCP server — unified PR operations across GitHub, GitLab, and Bitbucket.",
+  "type": "module",
+  "private": true,
+  "main": "dist/index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "dev": "tsx src/index.ts",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.12.1",
+    "zod": "^3.24.2"
+  },
+  "devDependencies": {
+    "@types/node": "^22.13.4",
+    "tsx": "^4.19.3",
+    "typescript": "^5.7.3"
+  },
+  "engines": {
+    "node": ">=18.17"
+  }
+}

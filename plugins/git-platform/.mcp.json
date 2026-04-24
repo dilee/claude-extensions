@@ -1,0 +1,12 @@
+{
+  "mcpServers": {
+    "git-platform": {
+      "command": "npx",
+      "args": ["tsx", "${CLAUDE_PLUGIN_ROOT}/src/index.ts"],
+      "env": {
+        "BITBUCKET_USERNAME": "",
+        "BITBUCKET_TOKEN": ""
+      }
+    }
+  }
+}

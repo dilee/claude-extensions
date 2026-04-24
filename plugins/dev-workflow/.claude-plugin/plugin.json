@@ -1,0 +1,11 @@
+{
+  "name": "dev-workflow",
+  "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation, and pre-PR documentation sync. Reads per-project parameters from the project's CLAUDE.md or AGENTS.md.",
+  "author": {
+    "name": "dilee"
+  },
+  "homepage": "https://github.com/dilee/claude-extensions",
+  "repository": "https://github.com/dilee/claude-extensions",
+  "license": "MIT",
+  "keywords": ["workflow", "git", "branch-naming", "tickets", "docs-sync", "pr-review"]
+}

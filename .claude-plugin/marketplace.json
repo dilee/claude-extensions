@@ -1,0 +1,27 @@
+{
+  "name": "dilee",
+  "owner": {
+    "name": "dilee"
+  },
+  "metadata": {
+    "description": "Personal Claude Code extensions — dev workflow helpers and more."
+  },
+  "plugins": [
+    {
+      "name": "dev-workflow",
+      "source": "./plugins/dev-workflow",
+      "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation, and pre-PR documentation sync.",
+      "version": "0.1.0",
+      "keywords": ["workflow", "git", "branch-naming", "tickets", "docs-sync"],
+      "license": "MIT"
+    },
+    {
+      "name": "git-platform",
+      "source": "./plugins/git-platform",
+      "description": "Unified MCP server for GitHub, GitLab, and Bitbucket — PR create / list / view / merge / approve / comment / decline, auto-detected from the repo's git remote.",
+      "version": "0.1.0",
+      "keywords": ["mcp", "github", "gitlab", "bitbucket", "pull-requests", "merge-requests", "git"],
+      "license": "MIT"
+    }
+  ]
+}
