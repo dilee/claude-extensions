@@ -87,3 +87,68 @@ export interface PullRequestCommentParams {
 export interface PullRequestDeclineParams {
   id: number;
 }
+
+export interface PullRequestUpdateParams {
+  id: number;
+  title?: string;
+  description?: string;
+  targetBranch?: string;
+  reviewers?: string[];
+  draft?: boolean;
+}
+
+export interface PullRequestInlineCommentParams {
+  id: number;
+  body: string;
+  path: string;
+  line: number;
+  side?: "old" | "new";
+}
+
+export interface PullRequestCommit {
+  sha: string;
+  message: string;
+  author: string;
+  authoredAt: string;
+  url?: string;
+}
+
+export interface PullRequestFile {
+  path: string;
+  oldPath?: string;
+  status: "added" | "modified" | "removed" | "renamed" | "unknown";
+  additions?: number;
+  deletions?: number;
+}
+
+export interface BranchInfo {
+  name: string;
+  sha: string;
+  isDefault?: boolean;
+  protected?: boolean;
+  url?: string;
+}
+
+export interface BranchListParams {
+  limit?: number;
+  search?: string;
+}
+
+export interface BranchViewParams {
+  name: string;
+}
+
+export interface CommitInfo {
+  sha: string;
+  message: string;
+  author: string;
+  authoredAt: string;
+  committer?: string;
+  committedAt?: string;
+  url?: string;
+  parents?: string[];
+}
+
+export interface CommitViewParams {
+  sha: string;
+}

@@ -141,6 +141,92 @@ server.tool(
   async (p) => asText(await (await getAdapter()).prDecline({ id: p.id })),
 );
 
+server.tool(
+  "pr_update",
+  "Edit an existing PR's title, description, target branch, reviewers, or draft state. Only fields you pass are changed.",
+  {
+    id: z.number(),
+    title: z.string().optional(),
+    description: z.string().optional(),
+    target_branch: z.string().optional().describe("Retarget the PR to a different base branch."),
+    reviewers: z.array(z.string()).optional().describe("Replace reviewer set (GitHub login, GitLab username, Bitbucket UUID)."),
+    draft: z.boolean().optional().describe("True converts to draft; false marks ready for review."),
+  },
+  async (p) => asText(await (await getAdapter()).prUpdate({
+    id: p.id,
+    title: p.title,
+    description: p.description,
+    targetBranch: p.target_branch,
+    reviewers: p.reviewers,
+    draft: p.draft,
+  })),
+);
+
+server.tool(
+  "pr_comment_inline",
+  "Add an inline review comment on a specific file/line of a PR's diff.",
+  {
+    id: z.number(),
+    body: z.string().describe("Comment body. Markdown supported."),
+    path: z.string().describe("File path as it appears in the diff."),
+    line: z.number().describe("1-based line number in the file."),
+    side: z.enum(["old", "new"]).optional().describe("Which side of the diff. Defaults to 'new'."),
+  },
+  async (p) => asText(await (await getAdapter()).prCommentInline({
+    id: p.id,
+    body: p.body,
+    path: p.path,
+    line: p.line,
+    side: p.side,
+  })),
+);
+
+server.tool(
+  "pr_commits",
+  "List the commits included in a pull request.",
+  {
+    id: z.number(),
+  },
+  async (p) => asText(await (await getAdapter()).prCommits(p.id)),
+);
+
+server.tool(
+  "pr_files",
+  "List files changed in a pull request, with status (added/modified/removed/renamed) and line counts.",
+  {
+    id: z.number(),
+  },
+  async (p) => asText(await (await getAdapter()).prFiles(p.id)),
+);
+
+server.tool(
+  "branch_list",
+  "List branches in the current repo.",
+  {
+    limit: z.number().optional().describe("Max results (default: 30)."),
+    search: z.string().optional().describe("Substring filter on branch name."),
+  },
+  async (p) => asText(await (await getAdapter()).branchList({ limit: p.limit, search: p.search })),
+);
+
+server.tool(
+  "branch_view",
+  "Get info about a single branch — head SHA, default-branch flag, protection status.",
+  {
+    name: z.string().describe("Branch name."),
+  },
+  async (p) => asText(await (await getAdapter()).branchView({ name: p.name })),
+);
+
+server.tool(
+  "commit_view",
+  "Get info about a single commit by SHA.",
+  {
+    sha: z.string().describe("Commit SHA (full or short)."),
+  },
+  async (p) => asText(await (await getAdapter()).commitView({ sha: p.sha })),
+);
+
 async function main() {
   const transport = new StdioServerTransport();
   await server.connect(transport);

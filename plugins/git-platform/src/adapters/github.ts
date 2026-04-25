@@ -11,6 +11,15 @@ import type {
   PullRequestApproveParams,
   PullRequestCommentParams,
   PullRequestDeclineParams,
+  PullRequestUpdateParams,
+  PullRequestInlineCommentParams,
+  PullRequestCommit,
+  PullRequestFile,
+  BranchInfo,
+  BranchListParams,
+  BranchViewParams,
+  CommitInfo,
+  CommitViewParams,
   Check,
 } from "../types.js";
 
@@ -173,6 +182,158 @@ export class GitHubAdapter extends PlatformAdapter {
     const out = await this.gh(["pr", "close", String(params.id), "--repo", this.slug]);
     return { declined: true, message: out.trim() || `Closed PR #${params.id}` };
   }
+
+  async prUpdate(params: PullRequestUpdateParams): Promise<PullRequest> {
+    const args = ["pr", "edit", String(params.id), "--repo", this.slug];
+    if (params.title !== undefined) args.push("--title", params.title);
+    if (params.description !== undefined) args.push("--body", params.description);
+    if (params.targetBranch !== undefined) args.push("--base", params.targetBranch);
+    if (params.reviewers !== undefined) {
+      args.push("--add-reviewer", params.reviewers.join(","));
+    }
+    await this.gh(args);
+    if (params.draft === true) {
+      await this.gh(["pr", "ready", String(params.id), "--repo", this.slug, "--undo"]);
+    } else if (params.draft === false) {
+      await this.gh(["pr", "ready", String(params.id), "--repo", this.slug]);
+    }
+    return this.prView({ id: params.id });
+  }
+
+  async prCommentInline(params: PullRequestInlineCommentParams): Promise<{ id: number; message: string }> {
+    const head = JSON.parse(
+      await this.gh(["pr", "view", String(params.id), "--repo", this.slug, "--json", "headRefOid"]),
+    ) as { headRefOid: string };
+
+    const body: Record<string, unknown> = {
+      body: params.body,
+      path: params.path,
+      line: params.line,
+      side: params.side === "old" ? "LEFT" : "RIGHT",
+      commit_id: head.headRefOid,
+    };
+
+    const out = await this.gh(
+      [
+        "api",
+        "--method", "POST",
+        `repos/${this.slug}/pulls/${params.id}/comments`,
+        "--input", "-",
+      ],
+      JSON.stringify(body),
+    );
+    const data = JSON.parse(out) as { id: number };
+    return { id: data.id, message: `Commented on PR #${params.id} ${params.path}:${params.line}` };
+  }
+
+  async prCommits(id: number): Promise<PullRequestCommit[]> {
+    const out = await this.gh([
+      "api", `repos/${this.slug}/pulls/${id}/commits`, "--paginate",
+    ]);
+    const data = JSON.parse(out) as {
+      sha: string;
+      commit: { message: string; author: { name: string; date: string } };
+      author: { login?: string } | null;
+      html_url: string;
+    }[];
+    return data.map((c) => ({
+      sha: c.sha,
+      message: c.commit.message,
+      author: c.author?.login ?? c.commit.author.name,
+      authoredAt: c.commit.author.date,
+      url: c.html_url,
+    }));
+  }
+
+  async prFiles(id: number): Promise<PullRequestFile[]> {
+    const out = await this.gh([
+      "api", `repos/${this.slug}/pulls/${id}/files`, "--paginate",
+    ]);
+    const data = JSON.parse(out) as {
+      filename: string;
+      previous_filename?: string;
+      status: string;
+      additions: number;
+      deletions: number;
+    }[];
+    return data.map((f) => ({
+      path: f.filename,
+      oldPath: f.previous_filename,
+      status: mapGhFileStatus(f.status),
+      additions: f.additions,
+      deletions: f.deletions,
+    }));
+  }
+
+  async branchList(params: BranchListParams): Promise<BranchInfo[]> {
+    const args = [
+      "api", `repos/${this.slug}/branches`,
+      "--paginate",
+      "-f", `per_page=${params.limit ?? 30}`,
+    ];
+    const data = JSON.parse(await this.gh(args)) as {
+      name: string;
+      commit: { sha: string };
+      protected: boolean;
+    }[];
+    const repo = await this.repoInfo();
+    let branches = data.map((b) => ({
+      name: b.name,
+      sha: b.commit.sha,
+      isDefault: b.name === repo.defaultBranch,
+      protected: b.protected,
+    }));
+    if (params.search) {
+      const q = params.search.toLowerCase();
+      branches = branches.filter((b) => b.name.toLowerCase().includes(q));
+    }
+    if (params.limit) branches = branches.slice(0, params.limit);
+    return branches;
+  }
+
+  async branchView(params: BranchViewParams): Promise<BranchInfo> {
+    const out = await this.gh([
+      "api", `repos/${this.slug}/branches/${encodeURIComponent(params.name)}`,
+    ]);
+    const data = JSON.parse(out) as {
+      name: string;
+      commit: { sha: string };
+      protected: boolean;
+    };
+    const repo = await this.repoInfo();
+    return {
+      name: data.name,
+      sha: data.commit.sha,
+      isDefault: data.name === repo.defaultBranch,
+      protected: data.protected,
+    };
+  }
+
+  async commitView(params: CommitViewParams): Promise<CommitInfo> {
+    const out = await this.gh(["api", `repos/${this.slug}/commits/${params.sha}`]);
+    const data = JSON.parse(out) as {
+      sha: string;
+      commit: {
+        message: string;
+        author: { name: string; date: string };
+        committer: { name: string; date: string };
+      };
+      author: { login?: string } | null;
+      committer: { login?: string } | null;
+      html_url: string;
+      parents: { sha: string }[];
+    };
+    return {
+      sha: data.sha,
+      message: data.commit.message,
+      author: data.author?.login ?? data.commit.author.name,
+      authoredAt: data.commit.author.date,
+      committer: data.committer?.login ?? data.commit.committer.name,
+      committedAt: data.commit.committer.date,
+      url: data.html_url,
+      parents: data.parents.map((p) => p.sha),
+    };
+  }
 }
 
 function mapGhPr(pr: GhPr): PullRequest {
@@ -189,6 +350,16 @@ function mapGhPr(pr: GhPr): PullRequest {
     createdAt: pr.createdAt,
     updatedAt: pr.updatedAt,
   };
+}
+
+function mapGhFileStatus(s: string): PullRequestFile["status"] {
+  switch (s) {
+    case "added": return "added";
+    case "removed": return "removed";
+    case "modified": case "changed": return "modified";
+    case "renamed": return "renamed";
+    default: return "unknown";
+  }
 }
 
 function mapGhCheckState(state: string): Check["status"] {

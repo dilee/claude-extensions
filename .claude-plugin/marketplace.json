@@ -18,8 +18,8 @@
     {
       "name": "git-platform",
       "source": "./plugins/git-platform",
-      "description": "Unified MCP server for GitHub, GitLab, and Bitbucket — PR create / list / view / merge / approve / comment / decline, auto-detected from the repo's git remote.",
-      "version": "0.1.1",
+      "description": "Unified MCP server for GitHub, GitLab, and Bitbucket — PR create / list / view / update / merge / approve / comment (incl. inline) / decline, plus PR commits & files, branch list/view, commit view, and CI checks. Auto-detected from the repo's git remote.",
+      "version": "0.2.0",
       "keywords": ["mcp", "github", "gitlab", "bitbucket", "pull-requests", "merge-requests", "git"],
       "license": "MIT"
     }

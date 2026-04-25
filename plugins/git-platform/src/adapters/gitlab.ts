@@ -11,6 +11,15 @@ import type {
   PullRequestApproveParams,
   PullRequestCommentParams,
   PullRequestDeclineParams,
+  PullRequestUpdateParams,
+  PullRequestInlineCommentParams,
+  PullRequestCommit,
+  PullRequestFile,
+  BranchInfo,
+  BranchListParams,
+  BranchViewParams,
+  CommitInfo,
+  CommitViewParams,
   Check,
 } from "../types.js";
 
@@ -167,6 +176,150 @@ export class GitLabAdapter extends PlatformAdapter {
   async prDecline(params: PullRequestDeclineParams): Promise<{ declined: boolean; message: string }> {
     await this.api(`projects/${this.project}/merge_requests/${params.id}`, "PUT", { state_event: "close" });
     return { declined: true, message: `Closed MR !${params.id}` };
+  }
+
+  async prUpdate(params: PullRequestUpdateParams): Promise<PullRequest> {
+    const body: Record<string, unknown> = {};
+    let title = params.title;
+    if (params.draft !== undefined && title === undefined) {
+      const current = await this.api<GlMr>(`projects/${this.project}/merge_requests/${params.id}`);
+      title = current.title;
+    }
+    if (title !== undefined) {
+      const stripped = title.replace(/^(Draft:\s*|WIP:\s*)/i, "");
+      body.title = params.draft ? `Draft: ${stripped}` : stripped;
+    }
+    if (params.description !== undefined) body.description = params.description;
+    if (params.targetBranch !== undefined) body.target_branch = params.targetBranch;
+    if (params.reviewers !== undefined) {
+      const ids = await Promise.all(params.reviewers.map((u) => this.lookupUserId(u)));
+      body.reviewer_ids = ids.filter((x): x is number => x !== null);
+    }
+    const data = await this.api<GlMr>(`projects/${this.project}/merge_requests/${params.id}`, "PUT", body);
+    return mapGlMr(data);
+  }
+
+  async prCommentInline(params: PullRequestInlineCommentParams): Promise<{ id: string; message: string }> {
+    const versions = await this.api<{
+      base_commit_sha: string;
+      head_commit_sha: string;
+      start_commit_sha: string;
+    }[]>(`projects/${this.project}/merge_requests/${params.id}/versions`);
+    const v = versions[0];
+    if (!v) throw new Error(`No diff versions found for MR !${params.id}`);
+
+    const position: Record<string, unknown> = {
+      base_sha: v.base_commit_sha,
+      head_sha: v.head_commit_sha,
+      start_sha: v.start_commit_sha,
+      position_type: "text",
+      new_path: params.path,
+      old_path: params.path,
+    };
+    if (params.side === "old") position.old_line = params.line;
+    else position.new_line = params.line;
+
+    const data = await this.api<{ id: string }>(
+      `projects/${this.project}/merge_requests/${params.id}/discussions`,
+      "POST",
+      { body: params.body, position },
+    );
+    return { id: data.id, message: `Commented on MR !${params.id} ${params.path}:${params.line}` };
+  }
+
+  async prCommits(id: number): Promise<PullRequestCommit[]> {
+    const data = await this.api<{
+      id: string;
+      message: string;
+      author_name: string;
+      author_email: string;
+      authored_date: string;
+      web_url: string;
+    }[]>(`projects/${this.project}/merge_requests/${id}/commits?per_page=100`);
+    return data.map((c) => ({
+      sha: c.id,
+      message: c.message,
+      author: c.author_name,
+      authoredAt: c.authored_date,
+      url: c.web_url,
+    }));
+  }
+
+  async prFiles(id: number): Promise<PullRequestFile[]> {
+    const data = await this.api<{
+      changes?: {
+        new_path: string;
+        old_path: string;
+        new_file?: boolean;
+        deleted_file?: boolean;
+        renamed_file?: boolean;
+      }[];
+    }>(`projects/${this.project}/merge_requests/${id}/changes`);
+    return (data.changes ?? []).map((c) => ({
+      path: c.new_path,
+      oldPath: c.renamed_file ? c.old_path : undefined,
+      status: c.new_file ? "added" : c.deleted_file ? "removed" : c.renamed_file ? "renamed" : "modified",
+    }));
+  }
+
+  async branchList(params: BranchListParams): Promise<BranchInfo[]> {
+    const qs = new URLSearchParams();
+    qs.set("per_page", String(params.limit ?? 30));
+    if (params.search) qs.set("search", params.search);
+    const data = await this.api<{
+      name: string;
+      commit: { id: string };
+      default: boolean;
+      protected: boolean;
+      web_url?: string;
+    }[]>(`projects/${this.project}/repository/branches?${qs.toString()}`);
+    return data.map((b) => ({
+      name: b.name,
+      sha: b.commit.id,
+      isDefault: b.default,
+      protected: b.protected,
+      url: b.web_url,
+    }));
+  }
+
+  async branchView(params: BranchViewParams): Promise<BranchInfo> {
+    const data = await this.api<{
+      name: string;
+      commit: { id: string };
+      default: boolean;
+      protected: boolean;
+      web_url?: string;
+    }>(`projects/${this.project}/repository/branches/${encodeURIComponent(params.name)}`);
+    return {
+      name: data.name,
+      sha: data.commit.id,
+      isDefault: data.default,
+      protected: data.protected,
+      url: data.web_url,
+    };
+  }
+
+  async commitView(params: CommitViewParams): Promise<CommitInfo> {
+    const data = await this.api<{
+      id: string;
+      message: string;
+      author_name: string;
+      authored_date: string;
+      committer_name: string;
+      committed_date: string;
+      web_url: string;
+      parent_ids: string[];
+    }>(`projects/${this.project}/repository/commits/${params.sha}`);
+    return {
+      sha: data.id,
+      message: data.message,
+      author: data.author_name,
+      authoredAt: data.authored_date,
+      committer: data.committer_name,
+      committedAt: data.committed_date,
+      url: data.web_url,
+      parents: data.parent_ids,
+    };
   }
 
   private async lookupUserId(username: string): Promise<number | null> {
