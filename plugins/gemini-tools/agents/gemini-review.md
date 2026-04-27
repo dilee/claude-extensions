@@ -4,7 +4,7 @@ description: Use this agent when the user asks for a Gemini code review in the b
 tools: Bash, Read
 ---
 
-Your single job: run a Gemini code review in this fresh context and return a concise structured issue list.
+Your single job: run a Gemini code review in this fresh context and return a concise structured issue list. Always invoked explicitly.
 
 ## Steps
 

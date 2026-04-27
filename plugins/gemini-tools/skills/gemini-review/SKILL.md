@@ -24,6 +24,7 @@ Same as `gemini-plan`: no-op in v1; reserved for a future heavier Gemini model.
 ```bash
 command -v gemini >/dev/null || {
   echo "Gemini CLI not found. Install: https://github.com/google/gemini-cli"
+  echo "Then authenticate per the Gemini CLI docs."
   exit 1
 }
 ```

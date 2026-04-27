@@ -24,6 +24,7 @@ The dispatcher will have given you the bug symptom, repro steps, error, and rele
 ```bash
 ROOT="$(pwd)"
 BRANCH="$(git branch --show-current 2>/dev/null || echo no-git)"
+RECENT="$(git log --oneline -5 2>/dev/null || true)"
 ```
 
 ### Step 3 — Build the prompt and run Gemini
@@ -36,6 +37,7 @@ PROMPT="You are a senior engineer debugging a reported issue. Read the code care
 ## Repo
 - Root: $ROOT
 - Branch: $BRANCH
+- Recent commits: $RECENT
 
 ## Symptom
 <bug description from the dispatching prompt>
