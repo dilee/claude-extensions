@@ -28,20 +28,43 @@ command -v codex >/dev/null || {
 ROOT="$(pwd)"
 BRANCH="$(git branch --show-current 2>/dev/null || echo no-git)"
 RECENT="$(git log --oneline -5 2>/dev/null || true)"
-TREE="$(ls -1)"
+TREE="$(ls -1 2>/dev/null || echo '(unable to list)')"
 ```
 
 The dispatching context will have given you a feature description and any constraints in the prompt.
 
-### Step 3 — Run Codex with output capture
+### Step 3 — Build the prompt and run Codex
+
+The dispatching prompt contains the feature description and any constraints. Substitute them into the template below, then invoke Codex.
 
 ```bash
+PROMPT="You are a senior engineer producing a focused implementation plan for the following feature.
+
+## Project
+- Root: $ROOT
+- Branch: $BRANCH
+- Top-level: $TREE
+- Recent commits: $RECENT
+
+## Feature
+<feature description from the dispatching prompt>
+
+## Constraints
+<constraints from the dispatching prompt, or 'none specified'>
+
+## Output format
+- One-paragraph summary
+- File-by-file breakdown of changes
+- Key decisions and tradeoffs
+- Risks and unknowns
+- Suggested next steps"
+
 codex exec \
   -s read-only \
   -c model_reasoning_effort="<high|xhigh>" \
   -C "$ROOT" \
   --output-last-message /tmp/codex-plan-output.md \
-  "<built prompt — same shape as the codex-plan skill's Step 3>"
+  "$PROMPT"
 ```
 
 Use `xhigh` if the dispatching prompt said "deep", "thorough", or "extra-high"; otherwise `high`.
