@@ -1,0 +1,11 @@
+{
+  "name": "gemini-tools",
+  "description": "Plan / review / debug ops backed by Google's Gemini CLI. Read-only delegation — Gemini never edits your files. User-invoked only via slash commands or explicit trigger phrases.",
+  "author": {
+    "name": "dilee"
+  },
+  "homepage": "https://github.com/dilee/claude-extensions",
+  "repository": "https://github.com/dilee/claude-extensions",
+  "license": "MIT",
+  "keywords": ["gemini", "google", "code-review", "planning", "debugging", "second-opinion"]
+}
