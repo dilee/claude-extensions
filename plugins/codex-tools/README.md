@@ -2,8 +2,6 @@
 
 Delegate read-only dev ops to OpenAI's Codex CLI from Claude Code. User-invoked only — these never auto-fire.
 
-Inspired by [deepanscode/claude-code-extensions/codex-tools](https://github.com/deepanscode/claude-code-extensions/tree/main/plugins/codex-tools).
-
 ## What you get
 
 ### Skills (slash commands, output streams to chat)

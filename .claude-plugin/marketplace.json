@@ -8,6 +8,14 @@
   },
   "plugins": [
     {
+      "name": "codex-tools",
+      "source": "./plugins/codex-tools",
+      "description": "Plan / review / debug ops backed by OpenAI's Codex CLI. Read-only delegation, user-invoked only.",
+      "version": "0.1.0",
+      "keywords": ["codex", "openai", "code-review", "planning", "debugging"],
+      "license": "MIT"
+    },
+    {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation, and pre-PR documentation sync.",
@@ -21,14 +29,6 @@
       "description": "Unified MCP server for GitHub, GitLab, and Bitbucket — PR create / list / view / update / merge / approve / comment (incl. inline) / decline, plus PR commits & files, branch list/view, commit view, and CI checks. Auto-detected from the repo's git remote.",
       "version": "0.2.0",
       "keywords": ["mcp", "github", "gitlab", "bitbucket", "pull-requests", "merge-requests", "git"],
-      "license": "MIT"
-    },
-    {
-      "name": "codex-tools",
-      "source": "./plugins/codex-tools",
-      "description": "Plan / review / debug ops backed by OpenAI's Codex CLI. Read-only delegation, user-invoked only.",
-      "version": "0.1.0",
-      "keywords": ["codex", "openai", "code-review", "planning", "debugging"],
       "license": "MIT"
     }
   ]
