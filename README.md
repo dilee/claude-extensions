@@ -51,8 +51,10 @@ If Claude reports your platform + owner + repo, you're done. Full walkthrough in
 
 | Plugin | Version | What it is | Setup effort |
 |---|---|---|---|
+| [`codex-tools`](./plugins/codex-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to OpenAI Codex CLI | Install `codex` CLI + `codex login` |
 | [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.1.0 | Skills + agent — branch naming, ticket-driven branch creation, pre-PR docs-sync | None beyond `/plugin install` |
-| [`git-platform`](./plugins/git-platform/README.md) | 0.1.0 | MCP server — unified PR operations across GitHub / GitLab / Bitbucket | `npm install` + auth per platform |
+| [`gemini-tools`](./plugins/gemini-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to Google Gemini CLI | Install `gemini` CLI + auth |
+| [`git-platform`](./plugins/git-platform/README.md) | 0.2.0 | MCP server — unified PR operations across GitHub / GitLab / Bitbucket | `npm install` + auth per platform |
 
 ## Getting started
 
@@ -88,6 +90,20 @@ Each plugin's README walks you through setup and usage. At minimum:
 
 ## Quick reference per plugin
 
+### `codex-tools`
+
+User-invoked only. Each op has a slash-command surface (output streams to chat) and a background agent surface (~400-word summary).
+
+| Slash command | Agent | What it does |
+|---|---|---|
+| `/codex-plan <feature>` | `codex-plan` | Codex produces an implementation plan / spec / architecture. |
+| `/codex-review` | `codex-review` | Codex reviews the current branch's diff (or scope you specify). |
+| `/codex-debug <symptom>` | `codex-debug` | Codex investigates a bug and proposes a hypothesis + fix. |
+
+All calls use `-s read-only`. Add "deep" / "thorough" prefix for `xhigh` reasoning effort.
+
+Full docs: [`plugins/codex-tools/README.md`](./plugins/codex-tools/README.md).
+
 ### `dev-workflow`
 
 **Skills**
@@ -104,6 +120,20 @@ Each plugin's README walks you through setup and usage. At minimum:
 | `docs-sync` | Scans the current branch vs base and lists doc gaps before you open the PR. Reports only; doesn't edit. |
 
 Full docs: [`plugins/dev-workflow/README.md`](./plugins/dev-workflow/README.md).
+
+### `gemini-tools`
+
+User-invoked only. Mirrors `codex-tools`, backed by Google's Gemini CLI.
+
+| Slash command | Agent | What it does |
+|---|---|---|
+| `/gemini-plan <feature>` | `gemini-plan` | Gemini produces an implementation plan. |
+| `/gemini-review` | `gemini-review` | Gemini reviews the current branch's diff. |
+| `/gemini-debug <symptom>` | `gemini-debug` | Gemini investigates a bug and proposes a hypothesis + fix. |
+
+All calls use `--approval-mode plan` (Gemini's read-only mode). The "deep" / "thorough" prefix is accepted but is currently a no-op (Gemini CLI doesn't expose an effort knob); see the plugin README for details.
+
+Full docs: [`plugins/gemini-tools/README.md`](./plugins/gemini-tools/README.md).
 
 ### `git-platform`
 
@@ -163,6 +193,17 @@ claude-extensions/
 ├── LICENSE
 ├── README.md
 └── plugins/
+    ├── codex-tools/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md
+    │   ├── skills/
+    │   │   ├── codex-plan/SKILL.md
+    │   │   ├── codex-review/SKILL.md
+    │   │   └── codex-debug/SKILL.md
+    │   └── agents/
+    │       ├── codex-plan.md
+    │       ├── codex-review.md
+    │       └── codex-debug.md
     ├── dev-workflow/
     │   ├── .claude-plugin/plugin.json
     │   ├── README.md
@@ -170,6 +211,17 @@ claude-extensions/
     │   │   ├── branch-naming/SKILL.md
     │   │   └── ticket-start/SKILL.md
     │   └── agents/docs-sync.md
+    ├── gemini-tools/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md
+    │   ├── skills/
+    │   │   ├── gemini-plan/SKILL.md
+    │   │   ├── gemini-review/SKILL.md
+    │   │   └── gemini-debug/SKILL.md
+    │   └── agents/
+    │       ├── gemini-plan.md
+    │       ├── gemini-review.md
+    │       └── gemini-debug.md
     └── git-platform/
         ├── .claude-plugin/plugin.json
         ├── .mcp.json
