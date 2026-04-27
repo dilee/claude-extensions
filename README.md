@@ -157,6 +157,7 @@ claude-extensions/
 ├── .claude-plugin/
 │   └── marketplace.json
 ├── .gitignore
+├── AGENTS.md
 ├── CLAUDE.md
 ├── CONTRIBUTING.md
 ├── LICENSE

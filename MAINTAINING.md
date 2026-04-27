@@ -147,7 +147,7 @@ The `.mcp.json`:
 
 ## Repo rules — non-negotiable
 
-These are in `CLAUDE.md` for a reason. Break them and the marketplace stops working (or leaks something it shouldn't).
+These are in `AGENTS.md` for a reason. Break them and the marketplace stops working (or leaks something it shouldn't).
 
 | Rule | Why |
 |---|---|
@@ -158,7 +158,7 @@ These are in `CLAUDE.md` for a reason. Break them and the marketplace stops work
 | Side-effectful actions require explicit in-conversation confirmation | Branch creation, pushes, PR merges, ticket transitions. Never silent. |
 | No project-specific identifiers in public files | No employer name, real ticket keys, internal URLs. Illustrative examples use `PROJ-1234`, `example.com`, `acme-corp`. |
 | Paths in manifests start with `./` | Relative, rooted at marketplace root. Never `../`. |
-| Don't `git add`, `git commit`, or `git push` without explicit user request | Stated in `CLAUDE.md`. |
+| Don't `git add`, `git commit`, or `git push` without explicit user request | Stated in `AGENTS.md`. |
 
 ## Maintenance recipes
 
@@ -226,7 +226,7 @@ Multi-file change. Walk through:
 3. Add the plugin's entry to the top-level `marketplace.json` `plugins` array. Include `name`, `source: "./plugins/<name>"`, `description`, `version`, `keywords`, `license`.
 4. Add a README at `plugins/<name>/README.md`.
 5. Update root `README.md` plugin table.
-6. Update `CLAUDE.md` tree diagram.
+6. Update `AGENTS.md` tree diagram.
 7. Validate: `claude plugin validate .`.
 
 ### Bumping versions
@@ -306,11 +306,12 @@ These bit during the build; keep them in mind:
 | `plugins/<p>/agents/<a>.md` | One agent. Frontmatter + system-prompt body. |
 | `plugins/<p>/.mcp.json` | MCP-server plugins only. How Claude Code launches the server. |
 | `plugins/<p>/README.md` | User-facing docs for the plugin. |
-| `CLAUDE.md` (root) | Instructions to Claude when editing this repo. The rules live here. |
+| `AGENTS.md` (root) | Canonical instructions for AI coding agents editing this repo. The rules live here. |
+| `CLAUDE.md` (root) | Pointer to `AGENTS.md`. Exists so Claude Code's native loader picks up the rules. |
 | `CONTRIBUTING.md` | Rules for external contributors. |
 | `MAINTAINING.md` | This file. |
 | `README.md` (root) | Public entry point. |
 
 ---
 
-The pattern is: each piece has its manifest, its body, and a narrow invocation contract; the rules in `CLAUDE.md` keep future edits consistent; the validators catch the rest.
+The pattern is: each piece has its manifest, its body, and a narrow invocation contract; the rules in `AGENTS.md` keep future edits consistent; the validators catch the rest.
