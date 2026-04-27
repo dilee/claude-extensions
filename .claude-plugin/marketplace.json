@@ -22,6 +22,14 @@
       "version": "0.2.0",
       "keywords": ["mcp", "github", "gitlab", "bitbucket", "pull-requests", "merge-requests", "git"],
       "license": "MIT"
+    },
+    {
+      "name": "codex-tools",
+      "source": "./plugins/codex-tools",
+      "description": "Plan / review / debug ops backed by OpenAI's Codex CLI. Read-only delegation, user-invoked only.",
+      "version": "0.1.0",
+      "keywords": ["codex", "openai", "code-review", "planning", "debugging"],
+      "license": "MIT"
     }
   ]
 }
