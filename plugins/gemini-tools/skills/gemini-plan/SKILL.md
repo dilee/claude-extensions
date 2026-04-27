@@ -80,8 +80,10 @@ About to call Gemini (read-only / approval-mode plan, model: gemini-2.5-pro). Th
 cd "$ROOT" && gemini -p "$PROMPT" \
   -m gemini-2.5-pro \
   --approval-mode plan \
-  -o text
+  -o text </dev/null
 ```
+
+`</dev/null` closes stdin so gemini doesn't append/wait on piped input when invoked from a non-TTY shell (e.g. Claude Code's Bash tool — `gemini -p` documents that stdin is appended to the prompt when present).
 
 Stream output to chat. Do not summarise.
 

@@ -58,8 +58,10 @@ cd "$ROOT" && gemini \
   -p "$PROMPT" \
   -m gemini-2.5-pro \
   --approval-mode plan \
-  -o text > /tmp/gemini-plan-output.md
+  -o text </dev/null > /tmp/gemini-plan-output.md
 ```
+
+`</dev/null` closes stdin so gemini doesn't wait on piped input in this non-TTY environment.
 
 ### Step 4 — Read the output
 

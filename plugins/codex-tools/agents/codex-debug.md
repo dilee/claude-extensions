@@ -63,8 +63,10 @@ codex exec \
   -c model_reasoning_effort="<high|xhigh>" \
   -C "$ROOT" \
   --output-last-message /tmp/codex-debug-output.md \
-  "$PROMPT"
+  "$PROMPT" </dev/null
 ```
+
+`</dev/null` closes stdin so codex doesn't hang waiting for piped input in this non-TTY environment.
 
 Use `xhigh` if the dispatching prompt said "deep", "thorough", or "extra-high"; otherwise `high`.
 

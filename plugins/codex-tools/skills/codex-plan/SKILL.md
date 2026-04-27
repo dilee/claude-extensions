@@ -92,8 +92,10 @@ codex exec \
   -s read-only \
   -c model_reasoning_effort="<high|xhigh>" \
   -C "$ROOT" \
-  "$PROMPT"
+  "$PROMPT" </dev/null
 ```
+
+`</dev/null` closes stdin so codex doesn't hang waiting for piped input when invoked from a non-TTY shell (e.g. Claude Code's Bash tool).
 
 Stream output to chat. Do not summarise. The user wants the full plan to discuss.
 

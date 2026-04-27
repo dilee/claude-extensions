@@ -61,8 +61,10 @@ PROMPT="You are a senior engineer debugging a reported issue. Read the code care
 cd "$ROOT" && gemini -p "$PROMPT" \
   -m gemini-2.5-pro \
   --approval-mode plan \
-  -o text > /tmp/gemini-debug-output.md
+  -o text </dev/null > /tmp/gemini-debug-output.md
 ```
+
+`</dev/null` closes stdin so gemini doesn't wait on piped input in this non-TTY environment.
 
 ### Step 4 — Read the output
 
