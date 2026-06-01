@@ -19,6 +19,15 @@ claude-extensions/
 ├── LICENSE
 ├── README.md
 └── plugins/
+    ├── coderabbit-tools/
+    │   ├── .claude-plugin/
+    │   │   └── plugin.json
+    │   ├── README.md
+    │   ├── skills/
+    │   │   ├── coderabbit-review/SKILL.md
+    │   │   └── coderabbit-fix/SKILL.md
+    │   └── agents/
+    │       └── coderabbit-review.md
     ├── codex-tools/
     │   ├── .claude-plugin/
     │   │   └── plugin.json

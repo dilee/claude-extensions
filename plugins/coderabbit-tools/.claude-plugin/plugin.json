@@ -1,0 +1,11 @@
+{
+  "name": "coderabbit-tools",
+  "description": "AI code review backed by the CodeRabbit CLI. /coderabbit-review (read-only report) and /coderabbit-fix (review → apply suggested fixes), plus a background review agent. User-invoked only.",
+  "author": {
+    "name": "dilee"
+  },
+  "homepage": "https://github.com/dilee/claude-extensions",
+  "repository": "https://github.com/dilee/claude-extensions",
+  "license": "MIT",
+  "keywords": ["coderabbit", "code-review", "ai-review", "fix-loop", "second-opinion"]
+}
