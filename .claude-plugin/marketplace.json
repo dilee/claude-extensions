@@ -8,6 +8,14 @@
   },
   "plugins": [
     {
+      "name": "coderabbit-tools",
+      "source": "./plugins/coderabbit-tools",
+      "description": "AI code review backed by the CodeRabbit CLI — /coderabbit-review (read-only report) and /coderabbit-fix (review → apply suggested fixes), plus a background review agent. User-invoked only.",
+      "version": "0.1.0",
+      "keywords": ["coderabbit", "code-review", "ai-review", "fix-loop", "second-opinion"],
+      "license": "MIT"
+    },
+    {
       "name": "codex-tools",
       "source": "./plugins/codex-tools",
       "description": "Plan / review / debug ops backed by OpenAI's Codex CLI. Read-only delegation, user-invoked only.",

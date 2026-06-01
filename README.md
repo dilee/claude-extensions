@@ -51,6 +51,7 @@ If Claude reports your platform + owner + repo, you're done. Full walkthrough in
 
 | Plugin | Version | What it is | Setup effort |
 |---|---|---|---|
+| [`coderabbit-tools`](./plugins/coderabbit-tools/README.md) | 0.1.0 | Skills + agent — CodeRabbit AI review (`/coderabbit-review`) and review→fix loop (`/coderabbit-fix`) | Install `coderabbit` CLI + `coderabbit auth login` |
 | [`codex-tools`](./plugins/codex-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to OpenAI Codex CLI | Install `codex` CLI + `codex login` |
 | [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.1.0 | Skills + agent — branch naming, ticket-driven branch creation, pre-PR docs-sync | None beyond `/plugin install` |
 | [`gemini-tools`](./plugins/gemini-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to Google Gemini CLI | Install `gemini` CLI + auth |
@@ -89,6 +90,20 @@ Each plugin's README walks you through setup and usage. At minimum:
 ```
 
 ## Quick reference per plugin
+
+### `coderabbit-tools`
+
+User-invoked only. CodeRabbit is review-only, so this plugin ships a read-only review path plus a review→fix path where Claude applies the suggested fixes.
+
+| Slash command / agent | What it does |
+|---|---|
+| `/coderabbit-review` | CodeRabbit reviews the branch delta (or scope you specify); findings stream to chat. Read-only. |
+| `/coderabbit-fix` | CodeRabbit reviews your uncommitted changes; Claude applies the high-severity fixes after you confirm, then re-checks once. |
+| `coderabbit-review` (agent) | Background review; ~400-word severity-grouped summary. |
+
+No effort knob — the CodeRabbit CLI exposes none; "deep" / "thorough" prefixes are no-op. See the plugin README.
+
+Full docs: [`plugins/coderabbit-tools/README.md`](./plugins/coderabbit-tools/README.md).
 
 ### `codex-tools`
 
@@ -193,6 +208,14 @@ claude-extensions/
 ├── LICENSE
 ├── README.md
 └── plugins/
+    ├── coderabbit-tools/
+    │   ├── .claude-plugin/plugin.json
+    │   ├── README.md
+    │   ├── skills/
+    │   │   ├── coderabbit-review/SKILL.md
+    │   │   └── coderabbit-fix/SKILL.md
+    │   └── agents/
+    │       └── coderabbit-review.md
     ├── codex-tools/
     │   ├── .claude-plugin/plugin.json
     │   ├── README.md
