@@ -19,6 +19,7 @@ Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven bra
 |---|---|---|
 | `branch-naming` | auto-invoked | You're about to run `git checkout -b`, `git switch -c`, `git branch <name>`, or `git push -u origin <new-branch>` — or you propose a branch name in conversation. Enforces `feature/`, `bugfix/`, `hotfix/`, `release/` prefixes plus the project's ticket-key format. |
 | `ticket-start` | user-invoked | You explicitly ask Claude to start a ticket or type `/ticket-start <KEY>`. Fetches the ticket from whichever tracker is reachable, proposes a correctly-prefixed branch, and creates it from the right base — only after confirmation. |
+| `ticket-start-worktree` | user-invoked | Same as `ticket-start`, but via `/ticket-start-worktree <KEY>`. Cuts the branch into a separate git worktree (sibling `../<repo>.worktrees/<branch>` directory) instead of switching the current checkout — so you can start a ticket without stashing in-progress work. |
 
 ### Agents
 
@@ -111,6 +112,27 @@ Claude will:
 5. Offer to transition the ticket to "In Progress" (won't do it without permission).
 
 Nothing with external side effects runs without explicit in-conversation approval.
+
+### `ticket-start-worktree` — ticket → branch in a separate worktree
+
+Same flow as `ticket-start`, but the new branch lands in its own git worktree instead of switching your current checkout. Use it when you want to start a ticket without disturbing whatever you're in the middle of — no stash, no half-done commit.
+
+Invoke explicitly:
+
+```
+/ticket-start-worktree PROJ-123
+```
+
+Claude will run steps 1–3 exactly as `ticket-start` does, then:
+
+4. Compute a worktree path in a sibling directory — `../<repo>.worktrees/<branch>`, with branch slashes flattened to dashes (e.g. a repo at `/work/myrepo` → `/work/myrepo.worktrees/feature-PROJ-123`).
+5. Detect local-only config the new worktree will need — git-ignored `.env`/config files in your current checkout (committed `.env.example`-style templates are excluded).
+6. Propose the branch name, base branch, worktree path, **and** the list of config files it'll copy in, then wait for confirmation.
+7. Create the worktree off the **latest** remote base: `git fetch origin <base>` then `git worktree add -b feature/PROJ-123 <path> origin/<base>` — always the current development tip, never a stale local branch.
+8. Copy the detected `.env`/config files into the worktree at their original relative paths, so it's ready to build and run.
+9. Tell you to `cd` into the new worktree; your original checkout is left untouched.
+
+Because it never touches your current checkout, a dirty working tree is **not** a blocker (unlike `ticket-start`, which stops and asks you to stash or commit first). Copied config files are treated as local-only — never committed, pushed, or printed — and stay git-ignored in the worktree. When the ticket is merged, clean up with `git worktree remove <path>`.
 
 ### `docs-sync` agent — pre-PR doc gap scan
 
