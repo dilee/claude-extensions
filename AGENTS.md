@@ -47,7 +47,9 @@ claude-extensions/
     │   ├── skills/
     │   │   ├── branch-naming/
     │   │   │   └── SKILL.md
-    │   │   └── ticket-start/
+    │   │   ├── ticket-start/
+    │   │   │   └── SKILL.md
+    │   │   └── ticket-start-worktree/
     │   │       └── SKILL.md
     │   └── agents/
     │       └── docs-sync.md

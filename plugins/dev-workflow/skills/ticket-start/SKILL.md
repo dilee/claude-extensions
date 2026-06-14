@@ -82,5 +82,6 @@ Do not auto-run anything with external side effects (ticket transitions, `git pu
 
 ## References
 
+- `ticket-start-worktree` skill in this same plugin — same flow, but cuts the branch into a separate git worktree instead of switching the current checkout. Use that when you want to start a ticket without disturbing in-progress work.
 - `branch-naming` skill in this same plugin — authoritative source for branch prefix rules and violation handling.
 - Host project's `CLAUDE.md` / `AGENTS.md` — tracker choice, ticket-key regex, integration branch name.
