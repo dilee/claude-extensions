@@ -26,8 +26,8 @@
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
-      "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation (in place or in a separate worktree), and pre-PR documentation sync.",
-      "version": "0.2.0",
+      "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation (in place or in a separate worktree), ticket capture for bugs/improvements, and pre-PR documentation sync.",
+      "version": "0.3.0",
       "keywords": ["workflow", "git", "branch-naming", "tickets", "worktree", "docs-sync"],
       "license": "MIT"
     },
