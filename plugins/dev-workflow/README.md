@@ -20,6 +20,7 @@ Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven bra
 | `branch-naming` | auto-invoked | You're about to run `git checkout -b`, `git switch -c`, `git branch <name>`, or `git push -u origin <new-branch>` — or you propose a branch name in conversation. Enforces `feature/`, `bugfix/`, `hotfix/`, `release/` prefixes plus the project's ticket-key format. |
 | `ticket-start` | user-invoked | You explicitly ask Claude to start a ticket or type `/ticket-start <KEY>`. Fetches the ticket from whichever tracker is reachable, proposes a correctly-prefixed branch, and creates it from the right base — only after confirmation. |
 | `ticket-start-worktree` | user-invoked | Same as `ticket-start`, but via `/ticket-start-worktree <KEY>`. Cuts the branch into a separate git worktree (sibling `../<repo>.worktrees/<branch>` directory) instead of switching the current checkout — so you can start a ticket without stashing in-progress work. |
+| `ticket-create` | user-invoked | You spot a bug or improvement mid-work and type `/ticket-create <description>` (or ask to "file a ticket"). Drafts a structured ticket from the current session context, confirms, then creates it in whichever tracker is reachable. The capture counterpart to `ticket-start`. |
 
 ### Agents
 
@@ -57,6 +58,7 @@ The plugin is framework-agnostic; you tell it about your project by adding this 
 ## Project conventions (read by Claude Code extensions)
 
 - Ticket key format: `[A-Z]+-\d+`   # adjust to your tracker, e.g. `PROJ-\d+`
+- Default ticket project: `PROJ`     # where `ticket-create` files new tickets (Jira project key / repo)
 - Integration branch: `main`         # or `develop` if you use Git Flow
 - Tracker: Jira                      # Jira | Linear | GitHub | GitLab
 - Docs folder: `docs/`
@@ -133,6 +135,33 @@ Claude will run steps 1–3 exactly as `ticket-start` does, then:
 9. Tell you to `cd` into the new worktree; your original checkout is left untouched.
 
 Because it never touches your current checkout, a dirty working tree is **not** a blocker (unlike `ticket-start`, which stops and asks you to stash or commit first). Copied config files are treated as local-only — never committed, pushed, or printed — and stay git-ignored in the worktree. When the ticket is merged, clean up with `git worktree remove <path>`.
+
+### `ticket-create` — spot it → file it, without breaking flow
+
+The capture counterpart to `ticket-start`. When you notice a bug or an improvement while doing something else, file a proper ticket for it instead of losing the thought or context-switching into the tracker UI.
+
+Invoke explicitly:
+
+```
+/ticket-create token refresh retries forever on a 401 instead of forcing re-login
+```
+
+or ask in natural language:
+
+```
+File a ticket for that null-check bug we just saw.
+```
+
+Claude will:
+
+1. Gather context from the current session — the file/`file:line` under discussion, the current branch/PR, and any error output or diff already in the conversation.
+2. Classify the type (Bug vs Improvement/Task) against the tracker's real issue types.
+3. Draft a structured ticket — summary, description, repro + expected/actual for bugs (or motivation + acceptance criteria for improvements), plus code links.
+4. Show you the draft and where it'll land, and wait for confirmation.
+5. Create it in your tracker (Jira / Linear / GitHub / GitLab) and report back the key + URL.
+6. Offer to start it right away via `ticket-start-worktree` — closing the capture → start loop.
+
+Nothing is written to the tracker without explicit in-conversation approval, and it won't invent repro steps or acceptance criteria you didn't provide.
 
 ### `docs-sync` agent — pre-PR doc gap scan
 
