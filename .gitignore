@@ -11,6 +11,9 @@ Thumbs.db
 .claude/
 !.claude-plugin/
 
+# Serena
+.serena/
+
 # Node (in case plugins add JS tooling later)
 node_modules/
 dist/

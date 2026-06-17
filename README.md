@@ -9,9 +9,9 @@ A personal plugin marketplace for [Claude Code](https://docs.anthropic.com/en/do
 Copy-paste this to go from zero to working. Inside Claude Code:
 
 ```
-/plugin marketplace add dilee/claude-extensions
-/plugin install dev-workflow@dilee
-/plugin install git-platform@dilee
+/plugin marketplace add nipunupekshana/claude-extensions
+/plugin install dev-workflow@nipunupekshana
+/plugin install git-platform@nipunupekshana
 ```
 
 Then in a terminal, finish `git-platform` setup (skip if you didn't install it):
@@ -53,7 +53,7 @@ If Claude reports your platform + owner + repo, you're done. Full walkthrough in
 |---|---|---|---|
 | [`coderabbit-tools`](./plugins/coderabbit-tools/README.md) | 0.1.0 | Skills + agent — CodeRabbit AI review (`/coderabbit-review`) and review→fix loop (`/coderabbit-fix`) | Install `coderabbit` CLI + `coderabbit auth login` |
 | [`codex-tools`](./plugins/codex-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to OpenAI Codex CLI | Install `codex` CLI + `codex login` |
-| [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.1.0 | Skills + agent — branch naming, ticket-driven branch creation, pre-PR docs-sync | None beyond `/plugin install` |
+| [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.3.0 | Skills + agent — branch naming, ticket-driven branch creation (worktree option), ticket capture, pre-PR docs-sync | None beyond `/plugin install` |
 | [`gemini-tools`](./plugins/gemini-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to Google Gemini CLI | Install `gemini` CLI + auth |
 | [`git-platform`](./plugins/git-platform/README.md) | 0.2.0 | MCP server — unified PR operations across GitHub / GitLab / Bitbucket | `npm install` + auth per platform |
 
@@ -64,14 +64,14 @@ If Claude reports your platform + owner + repo, you're done. Full walkthrough in
 Inside Claude Code:
 
 ```
-/plugin marketplace add dilee/claude-extensions
+/plugin marketplace add nipunupekshana/claude-extensions
 ```
 
 ### 2. Install the plugins you want
 
 ```
-/plugin install dev-workflow@dilee
-/plugin install git-platform@dilee
+/plugin install dev-workflow@nipunupekshana
+/plugin install git-platform@nipunupekshana
 ```
 
 Both are independent — install one or both.
@@ -127,6 +127,8 @@ Full docs: [`plugins/codex-tools/README.md`](./plugins/codex-tools/README.md).
 |---|---|---|
 | `branch-naming` | auto-invoked | You're about to create or push a new branch — enforces `feature/`, `bugfix/`, `hotfix/`, `release/` prefixes. |
 | `ticket-start` | user-invoked | You type `/ticket-start <KEY>` or ask Claude to start a ticket — fetches the ticket, proposes the correct branch, creates it on confirmation. |
+| `ticket-start-worktree` | user-invoked | You type `/ticket-start-worktree <KEY>` — same as `ticket-start` but cuts the branch into a separate git worktree, leaving your current checkout untouched. |
+| `ticket-create` | user-invoked | You type `/ticket-create <description>` or ask to "file a ticket" — drafts a structured ticket from session context, confirms, then creates it in your tracker. |
 
 **Agents**
 
@@ -233,7 +235,9 @@ claude-extensions/
     │   ├── skills/
     │   │   ├── branch-naming/SKILL.md
     │   │   └── ticket-start/SKILL.md
-    │   └── agents/docs-sync.md
+│   │   ├── ticket-start-worktree/SKILL.md
+│   │   └── ticket-create/SKILL.md
+│   └── agents/docs-sync.md
     ├── gemini-tools/
     │   ├── .claude-plugin/plugin.json
     │   ├── README.md

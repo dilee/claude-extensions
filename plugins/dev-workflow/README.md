@@ -44,8 +44,8 @@ Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven bra
 From inside Claude Code:
 
 ```
-/plugin marketplace add dilee/claude-extensions
-/plugin install dev-workflow@dilee
+/plugin marketplace add nipunupekshana/claude-extensions
+/plugin install dev-workflow@nipunupekshana
 ```
 
 The skills and agent are available immediately — no build step, no separate setup.
