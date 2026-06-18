@@ -1,11 +1,11 @@
 {
   "name": "dev-workflow",
-  "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation, ticket capture for bugs/improvements, and pre-PR documentation sync. Reads per-project parameters from the project's CLAUDE.md or AGENTS.md.",
+  "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation, ticket capture for bugs/improvements, pre-PR documentation sync, and a pre-PR quality review that fixes valid findings, cleans up comments, and opens/updates the PR. Reads per-project parameters from the project's CLAUDE.md or AGENTS.md.",
   "author": {
     "name": "dilee"
   },
   "homepage": "https://github.com/dilee/claude-extensions",
   "repository": "https://github.com/dilee/claude-extensions",
   "license": "MIT",
-  "keywords": ["workflow", "git", "branch-naming", "tickets", "docs-sync", "pr-review"]
+  "keywords": ["workflow", "git", "branch-naming", "tickets", "docs-sync", "pr-review", "pre-pr", "code-review"]
 }

@@ -47,6 +47,10 @@ claude-extensions/
     │   ├── skills/
     │   │   ├── branch-naming/
     │   │   │   └── SKILL.md
+    │   │   ├── pre-pr/
+    │   │   │   └── SKILL.md
+    │   │   ├── ticket-create/
+    │   │   │   └── SKILL.md
     │   │   ├── ticket-start/
     │   │   │   └── SKILL.md
     │   │   └── ticket-start-worktree/
