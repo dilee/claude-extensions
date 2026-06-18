@@ -27,7 +27,7 @@
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation (in place or in a separate worktree), ticket capture for bugs/improvements, pre-PR documentation sync, and a pre-PR quality review that fixes valid findings, cleans up comments, and opens/updates the PR.",
-      "version": "0.4.0",
+      "version": "0.4.1",
       "keywords": ["workflow", "git", "branch-naming", "tickets", "worktree", "docs-sync", "pre-pr", "code-review"],
       "license": "MIT"
     },

@@ -78,7 +78,11 @@ When unsure whether a comment carries non-obvious intent, keep it.
 
 Applying fixes after the code was tested can regress it, so re-run the project's tests/build before raising the PR. Use the **test command** declared in `CLAUDE.md` / `AGENTS.md` if present; otherwise ask the user for it rather than guessing a heavy suite. If something fails, fix forward only when the cause is obvious and in-scope; otherwise stop and report. **Cap at two fix→test passes** — don't loop.
 
-### Step 7 — Open or update the PR
+### Step 7 — Clear scaffolding
+
+If this work created spec, plan, or design docs purely as scaffolding for the implementation, clear them before the PR — delete them, or move them to the project's archive location if it keeps one (e.g. an `archive/` folder) — so they don't ship with the feature and the codebase stays lean. Keep anything that's genuinely part of the deliverable (ADRs, user-facing docs). Do this before the commit so it lands in the same change, and confirm before deleting.
+
+### Step 8 — Open or update the PR
 
 1. Offer to run the `docs-sync` agent first, so any doc gaps ride in the same PR (offer; don't force).
 2. **Commit** the changes: stage them, propose a commit message, and commit **only after confirmation**.

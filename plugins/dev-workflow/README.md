@@ -189,7 +189,8 @@ Claude will:
 4. Triage the findings and fix **only the valid ones** (after you confirm); subjective and uncertain items are listed, not auto-applied.
 5. Clean up comments added in this change — strip the noise, keep the ones that explain *why*, and never touch doc comments (it adds missing ones on new public declarations).
 6. Re-run your project's test command (from `CLAUDE.md` / `AGENTS.md`) so the fixes don't regress what you'd already tested.
-7. Commit, then open or update the PR — via the `git-platform` MCP if installed, otherwise `gh` / `glab`. It offers to run `docs-sync` first so doc updates ride along.
+7. Clear scaffolding — delete or archive any spec/plan/design docs that were just implementation aids, so they don't ship with the feature.
+8. Commit, then open or update the PR — via the `git-platform` MCP if installed, otherwise `gh` / `glab`. It offers to run `docs-sync` first so doc updates ride along.
 
 Nothing with side effects — editing files, committing, pushing, creating the PR — happens without explicit in-conversation confirmation.
 
