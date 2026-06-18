@@ -1,6 +1,6 @@
 # dev-workflow
 
-Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven branch creation, and a pre-PR documentation-sync check. The plugin is project-agnostic — it reads per-project parameters (tracker, ticket-key regex, integration branch, docs folder) from the host project's `CLAUDE.md` or `AGENTS.md`.
+Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven branch creation, ticket capture, a pre-PR documentation-sync check, and a pre-PR quality review that fixes valid findings, cleans up comments, and opens/updates the PR. The plugin is project-agnostic — it reads per-project parameters (tracker, ticket-key regex, integration branch, docs folder, test command) from the host project's `CLAUDE.md` or `AGENTS.md`.
 
 ## Contents
 
@@ -21,6 +21,7 @@ Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven bra
 | `ticket-start` | user-invoked | You explicitly ask Claude to start a ticket or type `/ticket-start <KEY>`. Fetches the ticket from whichever tracker is reachable, proposes a correctly-prefixed branch, and creates it from the right base — only after confirmation. |
 | `ticket-start-worktree` | user-invoked | Same as `ticket-start`, but via `/ticket-start-worktree <KEY>`. Cuts the branch into a separate git worktree (sibling `../<repo>.worktrees/<branch>` directory) instead of switching the current checkout — so you can start a ticket without stashing in-progress work. |
 | `ticket-create` | user-invoked | You spot a bug or improvement mid-work and type `/ticket-create <description>` (or ask to "file a ticket"). Drafts a structured ticket from the current session context, confirms, then creates it in whichever tracker is reachable. The capture counterpart to `ticket-start`. |
+| `pre-pr` | user-invoked | Your code is tested and you type `/pre-pr` (or ask to "review and open the PR"). Runs a codebase-aware quality review, fixes only the valid findings, strips noise comments (keeps doc comments), re-runs tests, then opens or updates the PR. Optional second opinion from CodeRabbit / Codex / Gemini if installed. |
 
 ### Agents
 
@@ -63,6 +64,7 @@ The plugin is framework-agnostic; you tell it about your project by adding this 
 - Tracker: Jira                      # Jira | Linear | GitHub | GitLab
 - Docs folder: `docs/`
 - ADR folder: `docs/adr/`
+- Test command: `npm test`           # what `/pre-pr` re-runs after applying fixes
 ````
 
 All fields are optional; sensible defaults apply. Setting them explicitly prevents Claude from guessing when conventions are ambiguous.
@@ -163,6 +165,34 @@ Claude will:
 
 Nothing is written to the tracker without explicit in-conversation approval, and it won't invent repro steps or acceptance criteria you didn't provide.
 
+### `pre-pr` — review → fix → clean up → PR, in one motion
+
+The last stop before a pull request. You've already tested the code; this gets it review-ready. Invoke explicitly:
+
+```
+/pre-pr
+```
+
+or ask in natural language:
+
+```
+Do a quality review, fix what's valid, then open the PR.
+```
+
+Optional argument: a base branch, a scope token (`committed` / `uncommitted` / `all`), or a focus hint (`/pre-pr focus on the auth module`).
+
+Claude will:
+
+1. Resolve the scope — the branch delta vs the base branch (`origin/develop` → `main` → `master`), plus uncommitted work.
+2. Run a **codebase-aware** quality review across four lenses: consistency with the rest of the codebase, reusability / DRY, best practices, and anything missed. It reads neighbouring files to learn your conventions before flagging a deviation.
+3. Offer an optional **second opinion** — CodeRabbit, Codex, or Gemini — if you have those plugins installed. Opt-in and non-blocking.
+4. Triage the findings and fix **only the valid ones** (after you confirm); subjective and uncertain items are listed, not auto-applied.
+5. Clean up comments added in this change — strip the noise, keep the ones that explain *why*, and never touch doc comments (it adds missing ones on new public declarations).
+6. Re-run your project's test command (from `CLAUDE.md` / `AGENTS.md`) so the fixes don't regress what you'd already tested.
+7. Commit, then open or update the PR — via the `git-platform` MCP if installed, otherwise `gh` / `glab`. It offers to run `docs-sync` first so doc updates ride along.
+
+Nothing with side effects — editing files, committing, pushing, creating the PR — happens without explicit in-conversation confirmation.
+
 ### `docs-sync` agent — pre-PR doc gap scan
 
 Invoke explicitly when you're about to open a PR:
@@ -197,3 +227,7 @@ Check that:
 ### `docs-sync` says "base branch not found"
 
 The agent tries `origin/develop`, then `origin/main`, then `origin/master`. If none exist (e.g. freshly cloned without fetching), run `git fetch origin` first. If your base branch has a different name, tell Claude which one to diff against.
+
+### `/pre-pr` skipped the second opinion or the PR step
+
+Both are conditional. The second opinion only appears if CodeRabbit / Codex / Gemini is installed — check `/plugin list`. The PR step uses the `git-platform` MCP if present, otherwise the `gh` / `glab` CLI; if neither is available, Claude commits and tells you to open the PR manually. And if no test command is set in your `CLAUDE.md` / `AGENTS.md`, `/pre-pr` asks for one rather than guessing a suite to run.

@@ -53,7 +53,7 @@ If Claude reports your platform + owner + repo, you're done. Full walkthrough in
 |---|---|---|---|
 | [`coderabbit-tools`](./plugins/coderabbit-tools/README.md) | 0.1.0 | Skills + agent — CodeRabbit AI review (`/coderabbit-review`) and review→fix loop (`/coderabbit-fix`) | Install `coderabbit` CLI + `coderabbit auth login` |
 | [`codex-tools`](./plugins/codex-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to OpenAI Codex CLI | Install `codex` CLI + `codex login` |
-| [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.1.0 | Skills + agent — branch naming, ticket-driven branch creation, pre-PR docs-sync | None beyond `/plugin install` |
+| [`dev-workflow`](./plugins/dev-workflow/README.md) | 0.4.0 | Skills + agent — branch naming, ticket-driven branches, ticket capture, pre-PR docs-sync, and a `/pre-pr` review → fix → PR pass | None beyond `/plugin install` |
 | [`gemini-tools`](./plugins/gemini-tools/README.md) | 0.1.0 | Skills + agents — delegate read-only plan / review / debug to Google Gemini CLI | Install `gemini` CLI + auth |
 | [`git-platform`](./plugins/git-platform/README.md) | 0.2.0 | MCP server — unified PR operations across GitHub / GitLab / Bitbucket | `npm install` + auth per platform |
 
@@ -127,6 +127,9 @@ Full docs: [`plugins/codex-tools/README.md`](./plugins/codex-tools/README.md).
 |---|---|---|
 | `branch-naming` | auto-invoked | You're about to create or push a new branch — enforces `feature/`, `bugfix/`, `hotfix/`, `release/` prefixes. |
 | `ticket-start` | user-invoked | You type `/ticket-start <KEY>` or ask Claude to start a ticket — fetches the ticket, proposes the correct branch, creates it on confirmation. |
+| `ticket-start-worktree` | user-invoked | Like `ticket-start`, but `/ticket-start-worktree <KEY>` cuts the branch into a separate git worktree so you don't disturb your current checkout. |
+| `ticket-create` | user-invoked | You type `/ticket-create <description>` (or ask to file a ticket) — drafts a structured ticket from the session and files it on confirmation. |
+| `pre-pr` | user-invoked | You type `/pre-pr` after testing — codebase-aware quality review, fixes only the valid findings, cleans up comments, re-runs tests, then opens/updates the PR. |
 
 **Agents**
 
@@ -182,6 +185,7 @@ Full docs (install, auth, self-hosted, troubleshooting): [`plugins/git-platform/
 - Tracker: Jira                      # Jira | Linear | GitHub | GitLab
 - Docs folder: `docs/`
 - ADR folder: `docs/adr/`
+- Test command: `npm test`           # what `/pre-pr` re-runs after applying fixes
 ````
 
 All fields are optional — defaults apply — but setting them prevents Claude from guessing when conventions are ambiguous.
@@ -232,7 +236,10 @@ claude-extensions/
     │   ├── README.md
     │   ├── skills/
     │   │   ├── branch-naming/SKILL.md
-    │   │   └── ticket-start/SKILL.md
+    │   │   ├── pre-pr/SKILL.md
+    │   │   ├── ticket-create/SKILL.md
+    │   │   ├── ticket-start/SKILL.md
+    │   │   └── ticket-start-worktree/SKILL.md
     │   └── agents/docs-sync.md
     ├── gemini-tools/
     │   ├── .claude-plugin/plugin.json
