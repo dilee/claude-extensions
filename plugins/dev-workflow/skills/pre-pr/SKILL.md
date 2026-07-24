@@ -68,11 +68,23 @@ Show the planned edits, then apply the valid set with `Edit` / `Write` as a batc
 
 Scoped to comments this change **added or modified** — never touch pre-existing comments elsewhere in the files, and never reformat the whole file.
 
-- **Remove**: comments that restate what the code plainly does, narration of obvious steps, commented-out code, decorative banners, and scaffolding/`TODO` noise we added.
-- **Keep, always**: comments that explain **why** (rationale, workarounds, invariants, perf/security caveats, issue links) and license/header blocks.
-- **Doc comments are compulsory**: never strip a doc comment (the language's doc convention — JSDoc/TSDoc, Python docstrings, Javadoc/KDoc, Go doc comments, rustdoc, etc.), and **add** one to any new exported/public declaration this change introduced that lacks one.
+This step is an enumerate-and-judge procedure, not a skim of the diff:
 
-When unsure whether a comment carries non-obvious intent, keep it.
+1. **Enumerate.** Mechanically extract the added lines that contain comments:
+
+   ```bash
+   { git diff "${BASE:-HEAD}"...HEAD; git diff HEAD; } \
+     | grep -E '^\+[^+]' \
+     | grep -E '^\+[[:space:]]*(//|#|/\*|\*|--|<!--)|[[:space:]](//|#)[[:space:]]'
+   ```
+
+   The pattern is a deliberately coarse net across languages — expect false positives (shebangs, strings, decorators). Open each hit in context before judging; the point is that every added comment lands on the checklist, not that the grep is precise.
+
+2. **Judge each hit** with one test: *does it state something the code cannot show?* Rationale, invariants, workarounds and what forces them, perf/security caveats, issue/spec links, and license/header blocks pass. Restating what the code plainly does, narrating obvious steps, decorative banners, commented-out code, and scaffolding/`TODO` noise we added all fail.
+
+3. **Default to removal.** Freshly generated code has a high base rate of noise comments, so an unclear verdict resolves to **remove** — the opposite of how you'd treat long-lived comments someone else wrote. One hard exception: **doc comments are compulsory** — never strip a doc comment (the language's doc convention: JSDoc/TSDoc, Python docstrings, Javadoc/KDoc, Go doc comments, rustdoc, etc.), and **add** one to any new exported/public declaration this change introduced that lacks one.
+
+4. **Report the counts** in the final summary — e.g. "comment hygiene: 14 added comments judged, 9 removed, 2 doc comments added" — so a suspiciously low removal count is visible to the user.
 
 ### Step 6 — Re-verify after fixing
 
@@ -90,7 +102,7 @@ Applying fixes after the code was tested can regress it, so re-run the project's
 
 - Every action with external side effects — commit, push, PR create/update — requires explicit in-conversation confirmation. Propose, then wait.
 - **Fix only valid findings.** Never auto-apply subjective or uncertain ones without the user's go-ahead.
-- **Never strip doc comments.** Comment hygiene is scoped to what this change introduced — never reformat the whole file's or codebase's comments.
+- **Never strip doc comments.** Comment hygiene judges every added comment individually (no skimming), resolves unclear verdicts to remove, and is scoped to what this change introduced — never reformat the whole file's or codebase's comments.
 - If the diff against base is empty, say so and stop.
 - The second opinion is opt-in and non-blocking; if the reviewer plugin/CLI isn't installed, note it and continue with Claude's review.
 - Never fabricate findings. If the review is clean, say so and move straight to comment hygiene and the PR.
