@@ -21,7 +21,7 @@ Universal dev-workflow helpers for Claude Code: branch naming, ticket-driven bra
 | `ticket-start` | user-invoked | You explicitly ask Claude to start a ticket or type `/ticket-start <KEY>`. Fetches the ticket from whichever tracker is reachable, proposes a correctly-prefixed branch, and creates it from the right base — only after confirmation. |
 | `ticket-start-worktree` | user-invoked | Same as `ticket-start`, but via `/ticket-start-worktree <KEY>`. Cuts the branch into a separate git worktree (sibling `../<repo>.worktrees/<branch>` directory) instead of switching the current checkout — so you can start a ticket without stashing in-progress work. |
 | `ticket-create` | user-invoked | You spot a bug or improvement mid-work and type `/ticket-create <description>` (or ask to "file a ticket"). Drafts a structured ticket from the current session context, confirms, then creates it in whichever tracker is reachable. The capture counterpart to `ticket-start`. |
-| `pre-pr` | user-invoked | Your code is tested and you type `/pre-pr` (or ask to "review and open the PR"). Runs a codebase-aware quality review, fixes only the valid findings, strips noise comments (keeps doc comments), re-runs tests, then opens or updates the PR. Optional second opinion from CodeRabbit / Codex / Gemini if installed. |
+| `pre-pr` | user-invoked | Your code is tested and you type `/pre-pr` (or ask to "review and open the PR"). Runs a codebase-aware quality review, fixes only the valid findings, strips noise comments (keeps doc comments), re-runs tests, then opens or updates the PR. Optional second opinion from CodeRabbit if installed. |
 
 ### Agents
 
@@ -185,7 +185,7 @@ Claude will:
 
 1. Resolve the scope — the branch delta vs the base branch (`origin/develop` → `main` → `master`), plus uncommitted work.
 2. Run a **codebase-aware** quality review across four lenses: consistency with the rest of the codebase, reusability / DRY, best practices, and anything missed. It reads neighbouring files to learn your conventions before flagging a deviation.
-3. Offer an optional **second opinion** — CodeRabbit, Codex, or Gemini — if you have those plugins installed. Opt-in and non-blocking.
+3. Offer an optional **second opinion** from CodeRabbit, if you have that plugin installed. Opt-in and non-blocking.
 4. Triage the findings and fix **only the valid ones** (after you confirm); subjective and uncertain items are listed, not auto-applied.
 5. Clean up comments added in this change — strip the noise, keep the ones that explain *why*, and never touch doc comments (it adds missing ones on new public declarations).
 6. Re-run your project's test command (from `CLAUDE.md` / `AGENTS.md`) so the fixes don't regress what you'd already tested.
@@ -230,4 +230,4 @@ The agent tries `origin/develop`, then `origin/main`, then `origin/master`. If n
 
 ### `/pre-pr` skipped the second opinion or the PR step
 
-Both are conditional. The second opinion only appears if CodeRabbit / Codex / Gemini is installed — check `/plugin list`. The PR step uses the `git-platform` MCP if present, otherwise the `gh` / `glab` CLI; if neither is available, Claude commits and tells you to open the PR manually. And if no test command is set in your `CLAUDE.md` / `AGENTS.md`, `/pre-pr` asks for one rather than guessing a suite to run.
+Both are conditional. The second opinion only appears if CodeRabbit is installed — check `/plugin list`. The PR step uses the `git-platform` MCP if present, otherwise the `gh` / `glab` CLI; if neither is available, Claude commits and tells you to open the PR manually. And if no test command is set in your `CLAUDE.md` / `AGENTS.md`, `/pre-pr` asks for one rather than guessing a suite to run.
