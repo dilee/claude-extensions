@@ -2,7 +2,7 @@
 
 Delegate AI code review to the [CodeRabbit CLI](https://docs.coderabbit.ai/cli) from Claude Code. User-invoked only — these never auto-fire.
 
-CodeRabbit is **review-only** (no plan/debug like `codex-tools` / `gemini-tools`), so this plugin is intentionally narrow: a read-only review path, plus a review→fix path where Claude applies CodeRabbit's suggested fixes.
+CodeRabbit is **review-only** (it doesn't plan or debug), so this plugin is intentionally narrow: a read-only review path, plus a review→fix path where Claude applies CodeRabbit's suggested fixes.
 
 ## What you get
 
@@ -66,7 +66,7 @@ It never commits or pushes — you stay in control of that.
 
 ## No effort knob — honest note
 
-The CodeRabbit CLI exposes no reasoning-effort or model-selection flag, so there's nothing to turn up. "Deep" / "thorough" prefixes are accepted but no-op. This is intentional asymmetry with `codex-tools` (real `model_reasoning_effort` knob) and `gemini-tools` (accepted-but-no-op knob).
+The CodeRabbit CLI exposes no reasoning-effort or model-selection flag, so there's nothing to turn up. "Deep" / "thorough" prefixes are accepted but no-op.
 
 ## Read-only vs mutating
 
@@ -79,4 +79,4 @@ Each invocation prints a one-line notice before calling CodeRabbit, stating the 
 
 ## Attribution
 
-Backed by the [CodeRabbit CLI](https://docs.coderabbit.ai/cli). Follows the surface conventions established by this repo's `codex-tools` / `gemini-tools`.
+Backed by the [CodeRabbit CLI](https://docs.coderabbit.ai/cli).

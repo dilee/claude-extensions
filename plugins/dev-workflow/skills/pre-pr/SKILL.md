@@ -9,7 +9,7 @@ Run the pre-PR quality gate for: $ARGUMENTS
 
 This skill is the last stop before a pull request. You've written and **tested** the code; this turns "it works" into "it's ready for review" in one motion: a codebase-aware quality pass → fix only the valid findings → a comment cleanup → the PR itself. It assumes the change is already tested and does not write the feature for you.
 
-It's the active counterpart to `docs-sync` (which only *reports* doc gaps): this one reviews, edits, and ships. The review is Claude's own, grounded in how the surrounding code is already written — with an optional second opinion from CodeRabbit / Codex / Gemini if you have those plugins installed.
+It's the active counterpart to `docs-sync` (which only *reports* doc gaps): this one reviews, edits, and ships. The review is Claude's own, grounded in how the surrounding code is already written — with an optional second opinion from CodeRabbit if you have that plugin installed.
 
 This skill is user-invoked only. Run it when the user types `/pre-pr [...]` or explicitly asks to "do a pre-PR review and open the PR".
 
@@ -53,8 +53,6 @@ Compile the findings with `file:line`, the lens, a severity, a one-line proposed
 After your own findings, offer to augment them with an external reviewer — **only if one is installed**, and **only on the user's say-so**:
 
 - **CodeRabbit** — the `/coderabbit-review` skill (read-only).
-- **Codex** — the `codex-review` agent.
-- **Gemini** — the `gemini-review` agent.
 
 If the user wants one, run it, then merge its findings into the list, de-duplicating against your own. This step is non-blocking: if no such plugin is installed or the user declines, note it in one line and continue with your own review.
 
@@ -113,6 +111,6 @@ Applying fixes after the code was tested can regress it, so re-run the project's
 
 - `docs-sync` agent (same plugin) — the pre-PR doc-gap scan; offer it before finalising the PR.
 - `branch-naming` skill (same plugin) — already governs the branch this PR comes from.
-- `coderabbit-review` / `codex-review` / `gemini-review` (sibling plugins, if installed) — the optional second opinion in Step 3.
+- `coderabbit-review` (sibling plugin, if installed) — the optional second opinion in Step 3.
 - `git-platform` MCP (if installed) — PR create/update across GitHub / GitLab / Bitbucket; otherwise `gh` / `glab`.
 - Host project `CLAUDE.md` / `AGENTS.md` — integration branch, docs folder, and test command.

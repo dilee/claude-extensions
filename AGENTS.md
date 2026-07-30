@@ -28,18 +28,6 @@ claude-extensions/
     │   │   └── coderabbit-fix/SKILL.md
     │   └── agents/
     │       └── coderabbit-review.md
-    ├── codex-tools/
-    │   ├── .claude-plugin/
-    │   │   └── plugin.json
-    │   ├── README.md
-    │   ├── skills/
-    │   │   ├── codex-plan/SKILL.md
-    │   │   ├── codex-review/SKILL.md
-    │   │   └── codex-debug/SKILL.md
-    │   └── agents/
-    │       ├── codex-plan.md
-    │       ├── codex-review.md
-    │       └── codex-debug.md
     ├── dev-workflow/
     │   ├── .claude-plugin/
     │   │   └── plugin.json
@@ -57,18 +45,6 @@ claude-extensions/
     │   │       └── SKILL.md
     │   └── agents/
     │       └── docs-sync.md
-    ├── gemini-tools/
-    │   ├── .claude-plugin/
-    │   │   └── plugin.json
-    │   ├── README.md
-    │   ├── skills/
-    │   │   ├── gemini-plan/SKILL.md
-    │   │   ├── gemini-review/SKILL.md
-    │   │   └── gemini-debug/SKILL.md
-    │   └── agents/
-    │       ├── gemini-plan.md
-    │       ├── gemini-review.md
-    │       └── gemini-debug.md
     └── git-platform/
         ├── .claude-plugin/
         │   └── plugin.json

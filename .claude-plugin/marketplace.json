@@ -11,32 +11,16 @@
       "name": "coderabbit-tools",
       "source": "./plugins/coderabbit-tools",
       "description": "AI code review backed by the CodeRabbit CLI — /coderabbit-review (read-only report) and /coderabbit-fix (review → apply suggested fixes), plus a background review agent. User-invoked only.",
-      "version": "0.1.0",
-      "keywords": ["coderabbit", "code-review", "ai-review", "fix-loop", "second-opinion"],
-      "license": "MIT"
-    },
-    {
-      "name": "codex-tools",
-      "source": "./plugins/codex-tools",
-      "description": "Plan / review / debug ops backed by OpenAI's Codex CLI. Read-only delegation, user-invoked only.",
       "version": "0.1.1",
-      "keywords": ["codex", "openai", "code-review", "planning", "debugging"],
+      "keywords": ["coderabbit", "code-review", "ai-review", "fix-loop", "second-opinion"],
       "license": "MIT"
     },
     {
       "name": "dev-workflow",
       "source": "./plugins/dev-workflow",
       "description": "Universal dev workflow — branch naming conventions, ticket-driven branch creation (in place or in a separate worktree), ticket capture for bugs/improvements, pre-PR documentation sync, and a pre-PR quality review that fixes valid findings, cleans up comments, and opens/updates the PR.",
-      "version": "0.4.1",
+      "version": "0.5.0",
       "keywords": ["workflow", "git", "branch-naming", "tickets", "worktree", "docs-sync", "pre-pr", "code-review"],
-      "license": "MIT"
-    },
-    {
-      "name": "gemini-tools",
-      "source": "./plugins/gemini-tools",
-      "description": "Plan / review / debug ops backed by Google's Gemini CLI. Read-only delegation, user-invoked only.",
-      "version": "0.1.1",
-      "keywords": ["gemini", "google", "code-review", "planning", "debugging"],
       "license": "MIT"
     },
     {
